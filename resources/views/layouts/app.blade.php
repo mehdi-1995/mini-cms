@@ -1,62 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Mini CMS')</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <style>
-        .fade-in {
-            animation: fadeIn 1s ease-in-out;
-        }
+        <title>{{ config('app.name', 'Laravel') }}</title>
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-            to {
-                opacity: 1;
-            }
-        }
-    </style>
+        <!-- Scripts -->
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
-</head>
+        <!-- Styles -->
+        @livewireStyles
+    </head>
+    <body class="font-sans antialiased">
+        <x-banner />
 
-<body>
-    @include('partials.navbar')
+        <div class="min-h-screen bg-gray-100">
+            @livewire('navigation-menu')
 
-    <div class="container mt-4 fade-in">
-        @yield('content')
-    </div>
+            <!-- Page Heading -->
+            @if (isset($header))
+                <header class="bg-white shadow">
+                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endif
 
-    @include('partials.footer')
+            <!-- Page Content -->
+            <main>
+                {{ $slot }}
+            </main>
+        </div>
 
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Custom JS -->
-    <script>
-        // Alert auto-hide
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                alert.classList.add('fade');
-                alert.addEventListener('transitionend', () => alert.remove());
-            }, 3000);
-        });
+        @stack('modals')
 
-        // Simple confirm delete
-        function confirmDelete(e) {
-            if (!confirm('Are you sure you want to delete this item?')) {
-                e.preventDefault();
-            }
-        }
-    </script>
-</body>
-
+        @livewireScripts
+    </body>
 </html>

@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -14,12 +13,14 @@ class DashboardController extends Controller
         $publishedPosts   = Post::where('published', true)->count();
         $draftPosts       = Post::where('published', false)->count();
         $totalUsers       = User::count();
+        $latestPosts      = Post::latest()->take(5)->get();
 
         return view('dashboard', compact(
             'totalPosts',
             'publishedPosts',
             'draftPosts',
-            'totalUsers'
+            'totalUsers',
+            'latestPosts'
         ));
     }
 }

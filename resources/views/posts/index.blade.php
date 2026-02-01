@@ -1,45 +1,57 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            پست‌ها
+        </h2>
+    </x-slot>
 
-@section('title', 'لیست پست‌ها')
-
-@section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="mb-0">لیست پست‌ها</h2>
-    {{-- <a href="{{ route('posts.create') }}" class="btn btn-primary">پست جدید</a> --}}
-</div>
-
-@if(session('success'))
-    <div class="alert alert-success">{{ session('success') }}</div>
-@endif
-
-{{-- <div class="mb-4">
-    <form method="GET" action="{{ route('posts.index') }}">
-        <input type="text" name="search" class="form-control search-bar" placeholder="جستجوی پست..." value="{{ request('search') }}">
-    </form>
-</div> --}}
-
-<div class="row g-4">
-    @forelse($posts as $post)
-        <div class="col-md-4">
-            <div class="card restaurant-card shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">{{ $post->title }}</h5>
-                    <p class="card-text text-truncate">{{ $post->content }}</p>
-                    <p class="mb-1"><strong>نویسنده:</strong> {{ $post->user?->name }}</p>
-                    <p class="mb-3"><strong>وضعیت:</strong> {{ $post->published ? 'منتشر شده' : 'پیش‌نویس' }}</p>
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('posts.edit', $post) }}" class="btn btn-sm btn-warning">ویرایش</a>
-                        <form action="{{ route('posts.destroy', $post) }}" method="POST" onsubmit="confirmDelete(event)">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger">حذف</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+    <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="flex justify-end mb-4">
+            <a href="{{ route('posts.create') }}"
+               class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+               ایجاد پست جدید
+            </a>
         </div>
-    @empty
-        <p class="text-center">هیچ پستی وجود ندارد.</p>
-    @endforelse
-</div>
-@endsection
+
+        <div class="bg-white shadow-sm sm:rounded-lg p-6">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">عنوان</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">نویسنده</th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">وضعیت</th>
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">عملیات</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach($posts as $post)
+                        <tr>
+                            <td class="px-6 py-4 text-right">{{ $post->title }}</td>
+                            <td class="px-6 py-4 text-right">{{ $post->user->name ?? 'نامشخص' }}</td>
+                            <td class="px-6 py-4 text-right">
+                                @if($post->published)
+                                    <span class="text-green-600 font-semibold">منتشر شده</span>
+                                @else
+                                    <span class="text-red-600 font-semibold">پیش‌نویس</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-center space-x-2">
+                                <a href="{{ route('posts.edit', $post->id) }}" class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
+                                <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="inline-block" onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
+                    @if($posts->isEmpty())
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-gray-500">هیچ پستی وجود ندارد.</td>
+                        </tr>
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+</x-app-layout>

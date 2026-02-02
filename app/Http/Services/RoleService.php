@@ -9,10 +9,12 @@ class RoleService
     public function store(array $data)
     {
         $role = Role::create(['name' => $data['name']]);
-        if ($data['permissions']) {
+        if (isset($data['permissions']) && !empty($data['permissions'])) {
             $role->syncPermissions($data['permissions']);
         }
+        return $role;
     }
+
     public function update(array $data, Role $role)
     {
         $role->update(['name' => $data['name']]);

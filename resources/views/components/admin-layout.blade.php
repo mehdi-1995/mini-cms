@@ -16,6 +16,7 @@
         </aside>
 
         <main class="flex-1 p-6">
+            <x-alert />
             {{ $slot }}
         </main>
     </div>

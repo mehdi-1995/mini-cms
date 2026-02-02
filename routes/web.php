@@ -89,3 +89,17 @@ Route::prefix('admin')->as('admin.')->group(function () {
 
     });
 });
+
+
+
+Route::get('/debug-locale', function () {
+    return [
+        'current_locale' => app()->getLocale(),
+        'fallback_locale' => config('app.fallback_locale'),
+        'lang_path' => lang_path(),
+        'fa_validation_exists' => file_exists(lang_path('fa/validation.php')),
+        'en_validation_exists' => file_exists(lang_path('en/validation.php')),
+        'available_locales' => ['en', 'fa'], // لیست زبان‌های موجود
+        'translation_test' => trans('validation.required', ['attribute' => 'نام']),
+    ];
+});

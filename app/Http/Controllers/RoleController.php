@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Presenters\RolePresenter;
 use App\Http\Services\RoleService;
 use Spatie\Permission\Models\Role;
+use App\Http\Requests\RoleStoreRequest;
 use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
@@ -16,7 +17,8 @@ class RoleController extends Controller
 
     public function index()
     {
-        $roles = Role::with('permissions')->get()->map(fn ($role) => new RolePresenter($role));
+        $this->authorize('viewAny', Role::class);
+        $roles = Role::with('permissions')->get();
         return view('roles.index', compact('roles'));
     }
 
@@ -26,23 +28,22 @@ class RoleController extends Controller
         return view('roles.create', compact('permissions'));
     }
 
-    public function store(Request $request)
+    public function store(RoleStoreRequest $request)
     {
         try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|unique:roles,name',
-                'permissions' => 'array',
-            ]);
+            $validatedData = $request->validated();
             $this->service->store($validatedData);
-            return redirect()->route('roles.index')->with('success', 'نقش با موفقیت ایجاد شد.');
-
+            return redirect()->route('admin.roles.index')->with('success', 'نقش با موفقیت ایجاد شد.');
         } catch (\Exception $e) {
-            return back()->withErrors($e->getMessage());
+            return redirect()->back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
     }
 
     public function edit(Role $role)
     {
+        $this->authorize('update', $role);
         $permissions = Permission::all();
         return view('roles.edit', compact('role', 'permissions'));
     }
@@ -65,7 +66,8 @@ class RoleController extends Controller
     // حذف نقش
     public function destroy(Role $role)
     {
+        $this->authorize('delete', $role);
         $role->delete();
-        return redirect()->route('roles.index')->with('success', 'نقش با موفقیت حذف شد.');
+        return redirect()->route('admin.roles.index')->with('success', 'نقش با موفقیت حذف شد.');
     }
 }

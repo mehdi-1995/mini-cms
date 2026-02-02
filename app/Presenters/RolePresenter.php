@@ -13,19 +13,19 @@ class RolePresenter
         $this->role = $role;
     }
 
-    public function editRoute(): string
-    {
-        return auth()->guard('admin')->check()
-            ? route('admin.roles.edit', $this->role->id)
-            : route('roles.edit', $this->role->id);
-    }
+    // public function editRoute(): string
+    // {
+    //     return auth()->guard('admin')->check()
+    //         ? route('admin.roles.edit', $this->role->id)
+    //         : route('roles.edit', $this->role->id);
+    // }
 
-    public function destroyRoute(): string
-    {
-        return auth()->guard('admin')->check()
-            ? route('admin.roles.destroy', $this->role->id)
-            : route('roles.destroy', $this->role->id);
-    }
+    // public function destroyRoute(): string
+    // {
+    //     return auth()->guard('admin')->check()
+    //         ? route('admin.roles.destroy', $this->role->id)
+    //         : route('roles.destroy', $this->role->id);
+    // }
 
     public function name(): string
     {

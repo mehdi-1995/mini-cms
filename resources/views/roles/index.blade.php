@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             مدیریت نقش‌ها
@@ -35,17 +35,17 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     @foreach ($roles as $role)
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-4 text-right">{{ $role->name() }}</td>
+                            <td class="px-6 py-4 text-right">{{ $role->name }}</td>
                             <td class="px-6 py-4 text-right">
-                                @foreach ($role->permissions() as $perm)
+                                @foreach ($role->permissions as $perm)
                                     <span
                                         class="inline-block bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded mr-1 mb-1">{{ $perm->name }}</span>
                                 @endforeach
                             </td>
                             <td class="px-6 py-4 text-center space-x-2">
-                                <a href="{{ $role->destroyRoute() }}"
+                                <a href="{{ route('admin.roles.edit', $role) }}"
                                     class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                <form action="{{ $role->destroyRoute() }}" method="POST"
+                                <form action="{{ route('admin.roles.destroy', $role) }}" method="POST"
                                     class="inline-block" onsubmit="return confirm('آیا مطمئن هستید؟')">
                                     @csrf
                                     @method('DELETE')
@@ -59,4 +59,4 @@
             </table>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

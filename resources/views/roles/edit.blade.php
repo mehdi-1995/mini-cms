@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-admin-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             ویرایش نقش: {{ $role->name }}
@@ -7,7 +7,7 @@
 
     <div class="py-6 max-w-3xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow-sm sm:rounded-lg p-6">
-            <form action="{{ route('admin.roles.update', $role->id) }}" method="POST">
+            <form action="{{ route('admin.roles.update', $role) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -47,4 +47,4 @@
             </form>
         </div>
     </div>
-</x-app-layout>
+</x-admin-layout>

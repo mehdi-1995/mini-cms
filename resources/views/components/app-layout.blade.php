@@ -13,6 +13,7 @@
         @endif
 
         <main>
+            <x-alert />
             {{ $slot }}
         </main>
     </div>

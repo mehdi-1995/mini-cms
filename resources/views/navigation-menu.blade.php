@@ -17,16 +17,15 @@
                             {{ __('Dashboard') }}
                         </x-nav-link>
 
-                        <x-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.*')">
-                            {{ __('Posts') }}
-                        </x-nav-link>
-
-                        <x-nav-link href="{{ route('roles.index') }}" :active="request()->routeIs('roles.*')">
-                            {{ __('Roles') }}
-                        </x-nav-link>
+                        @role('user')
+                            <x-nav-link href="{{ route('posts.index') }}" :active="request()->routeIs('posts.*')">
+                                {{ __('Posts') }}
+                            </x-nav-link>
+                        @endrole
                     @endauth
                 </div>
             </div>
+
             <!-- Right Side Menu -->
             @guest
                 <div class="flex items-center gap-4">
@@ -40,6 +39,7 @@
                     </a>
                 </div>
             @endguest
+
             @auth
                 <div class="hidden sm:flex sm:items-center sm:ms-6">
                     <!-- Teams Dropdown -->
@@ -151,6 +151,7 @@
 
                 </div>
             @endauth
+            
             <!-- Hamburger -->
             <div class="-me-2 flex items-center sm:hidden">
                 <button @click="open = ! open"

@@ -1,4 +1,4 @@
-{{-- <x-base-layout>
+<x-base-layout>
     <x-banner />
 
     <div class="min-h-screen">
@@ -16,4 +16,4 @@
             {{ $slot }}
         </main>
     </div>
-</x-base-layout> --}}
+</x-base-layout>

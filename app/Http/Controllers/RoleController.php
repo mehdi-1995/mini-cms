@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Presenters\RolePresenter;
 use App\Http\Services\RoleService;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
@@ -15,7 +16,7 @@ class RoleController extends Controller
 
     public function index()
     {
-        $roles = Role::with('permissions')->get();
+        $roles = Role::with('permissions')->get()->map(fn ($role) => new RolePresenter($role));
         return view('roles.index', compact('roles'));
     }
 

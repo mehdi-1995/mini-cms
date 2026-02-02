@@ -7,7 +7,7 @@
 
     <div class="py-6 max-w-3xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow-sm sm:rounded-lg p-6">
-            <form action="{{ route('roles.update', $role->id) }}" method="POST">
+            <form action="{{ route('admin.roles.update', $role->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
@@ -38,7 +38,7 @@
 
                 {{-- دکمه‌ها --}}
                 <div class="flex justify-end gap-2">
-                    <a href="{{ route('roles.index') }}"
+                    <a href="{{ route('admin.roles.index') }}"
                         class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition">بازگشت</a>
                     <button type="submit"
                         class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">ذخیره

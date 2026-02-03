@@ -6,8 +6,9 @@ use Illuminate\Http\Request;
 use App\Presenters\RolePresenter;
 use App\Http\Services\RoleService;
 use Spatie\Permission\Models\Role;
-use App\Http\Requests\RoleStoreRequest;
 use Spatie\Permission\Models\Permission;
+use App\Http\Requests\RoleRequest\RoleStoreRequest;
+use App\Http\Requests\RoleRequest\RoleUpdateRequest;
 
 class RoleController extends Controller
 {
@@ -48,13 +49,10 @@ class RoleController extends Controller
         return view('roles.edit', compact('role', 'permissions'));
     }
 
-    public function update(Request $request, Role $role)
+    public function update(RoleUpdateRequest $request, Role $role)
     {
         try {
-            $validatedData = $request->validate([
-                'name' => 'required|string|unique:roles,name,'.$role->id,
-                'permissions' => 'array',
-            ]);
+            $validatedData = $request->validated();
             $this->service->update($validatedData, $role);
             return redirect()->route('roles.index')->with('success', 'نقش با موفقیت بروزرسانی شد.');
 

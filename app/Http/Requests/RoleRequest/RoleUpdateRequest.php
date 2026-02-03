@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\RoleRequest;
 
-use BaseRoleRequest;
 use Illuminate\Validation\Rule;
 
 class RoleUpdateRequest extends BaseRoleRequest
@@ -22,12 +21,13 @@ class RoleUpdateRequest extends BaseRoleRequest
      */
     public function rules(): array
     {
-        $roleId = $this->route('role')?->id;
-        return array_merge(parent::rules(), [
+        $role = $this->route('role');
+
+        return array_merge($this->baseRules(), [
             'name' => [
                 'required',
                 'string',
-                Rule::unique('roles', 'name')->ignore($roleId),
+                Rule::unique('roles', 'name')->ignore($role),
             ],
         ]);
     }

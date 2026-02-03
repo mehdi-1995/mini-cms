@@ -1,9 +1,21 @@
 <?php
 
+namespace App\Http\Requests\RoleRequest;
+
 use Illuminate\Foundation\Http\FormRequest;
 
 abstract class BaseRoleRequest extends FormRequest
 {
+
+    protected function baseRules(): array
+    {
+        return [
+            'name' => ['required', 'string'],
+            'permissions' => ['nullable', 'array'],
+            'permissions.*' => ['string'],
+        ];
+    }
+    
     public function messages(): array
     {
         return [

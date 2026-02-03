@@ -1,8 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
-
-use BaseRoleRequest;
+namespace App\Http\Requests\RoleRequest;
 
 class RoleStoreRequest extends BaseRoleRequest
 {
@@ -21,10 +19,8 @@ class RoleStoreRequest extends BaseRoleRequest
      */
     public function rules(): array
     {
-        return [
-            'name' => 'required|string|unique:roles,name',
-            'permissions' => ['nullable', 'array'],
-            'permissions.*' => ['string'],
-        ];
+        return array_merge($this->baseRules(), [
+            'name' => ['required', 'string', 'unique:roles,name'],
+        ]);
     }
 }

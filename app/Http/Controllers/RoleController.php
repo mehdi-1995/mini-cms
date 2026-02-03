@@ -2,11 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Presenters\RolePresenter;
 use App\Http\Services\RoleService;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
 use App\Http\Requests\RoleRequest\RoleStoreRequest;
 use App\Http\Requests\RoleRequest\RoleUpdateRequest;
 
@@ -19,24 +16,27 @@ class RoleController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Role::class);
-        $roles = Role::with('permissions')->get();
+        $roles = $this->service->getAll();
         return view('roles.index', compact('roles'));
     }
 
     public function create()
     {
-        $permissions = Permission::all();
+        $permissions = $this->service->getAllPermissions();
         return view('roles.create', compact('permissions'));
     }
 
     public function store(RoleStoreRequest $request)
     {
+        $this->authorize('create', Role::class);
         try {
             $validatedData = $request->validated();
             $this->service->store($validatedData);
-            return redirect()->route('admin.roles.index')->with('success', 'نقش با موفقیت ایجاد شد.');
+            return redirect()
+            ->route('admin.roles.index')
+            ->with('success', __('messages.role_created'));
         } catch (\Exception $e) {
-            return redirect()->back()
+            return back()
                 ->with('error', $e->getMessage())
                 ->withInput();
         }
@@ -45,19 +45,22 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         $this->authorize('update', $role);
-        $permissions = Permission::all();
+        $permissions = $this->service->getAllPermissions();
         return view('roles.edit', compact('role', 'permissions'));
     }
 
     public function update(RoleUpdateRequest $request, Role $role)
     {
+        $this->authorize('update', $role);
         try {
-            $validatedData = $request->validated();
-            $this->service->update($validatedData, $role);
-            return redirect()->route('roles.index')->with('success', 'نقش با موفقیت بروزرسانی شد.');
-
+            $this->service->update($request->validated(), $role);
+            return redirect()
+            ->route('admin.roles.index')
+            ->with('success', __('messages.role_updated', ['name' => $role->name]));
         } catch (\Exception $e) {
-            return back()->withErrors($e->getMessage());
+            return back()
+                ->with('error', $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -65,7 +68,9 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $this->authorize('delete', $role);
-        $role->delete();
-        return redirect()->route('admin.roles.index')->with('success', 'نقش با موفقیت حذف شد.');
+        $this->service->delete($role);
+        return redirect()
+            ->route('admin.roles.index')
+            ->with('success', __('messages.role_deleted', ['name' => $role->name]));
     }
 }

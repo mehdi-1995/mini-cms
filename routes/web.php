@@ -35,7 +35,7 @@ Route::middleware(['auth','verified'])->group(function () {
     Route::get('/posts/{post}', [PostController::class, 'show'])->name('posts.show');
 
     // مدیریت پست‌ها برای نقش‌های مجاز
-    Route::middleware('role:editor|author|admin')->group(function () {
+    Route::middleware('role:editor|author')->group(function () {
         Route::prefix('posts')->as('posts.')->group(function () {
             Route::get('/create', [PostController::class, 'create'])->name('create');
             Route::post('/', [PostController::class, 'store'])->name('store');
@@ -65,7 +65,14 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::post('/logout', [AdminAuthController::class,'logout'])->name('logout');
 
         // کاربران
-        Route::get('/users', [UserController::class, 'index'])->name('users.index');
+        Route::prefix('users')->as('users.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/create', [UserController::class, 'create'])->name('create');
+            Route::post('/', [UserController::class, 'store'])->name('store');
+            Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+            Route::put('/{user}', [UserController::class, 'update'])->name('update');
+            Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        });
 
         // نقش‌ها
         Route::prefix('roles')->as('roles.')->middleware('role:admin|super-admin')->group(function () {

@@ -26,12 +26,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        dd('create');
-        try {
-            $this->service->store();
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
+        return view();
     }
 
     /**
@@ -39,7 +34,11 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $this->service->store();
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
     }
 
     /**
@@ -55,7 +54,7 @@ class PostController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        return view();
     }
 
     /**
@@ -63,7 +62,11 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -71,6 +74,10 @@ class PostController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            //code...
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 }

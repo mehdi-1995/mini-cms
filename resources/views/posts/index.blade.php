@@ -29,13 +29,13 @@
                             عملیات</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody id="posts-body" class="bg-white divide-y divide-gray-200">
                     @foreach ($posts as $post)
                         <tr>
-                            <td class="px-6 py-4 text-right">{{ $post->title }}</td>
+                            <td class="px-6 py-4 text-right">{{ $post->title() }}</td>
                             <td class="px-6 py-4 text-right">{{ $post->user->name ?? 'نامشخص' }}</td>
                             <td class="px-6 py-4 text-right">
-                                @if ($post->published)
+                                @if ($post->published())
                                     <span class="text-green-600 font-semibold">منتشر شده</span>
                                 @else
                                     <span class="text-red-600 font-semibold">پیش‌نویس</span>
@@ -44,8 +44,8 @@
                             <td class="px-6 py-4 text-center space-x-2">
                                 <a href="{{ $post->editRout() }}"
                                     class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                <form action="{{ $post->destroyRout() }}" method="POST"
-                                    class="inline-block" onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                <form action="{{ $post->destroyRout() }}" method="POST" class="inline-block"
+                                    onsubmit="return confirm('آیا مطمئن هستید؟')">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit"
@@ -61,6 +61,72 @@
                     @endif
                 </tbody>
             </table>
+
+            {{-- Load More (AJAX) — غیرفعال شده، pagination شماره‌ای برای پنل ادمین مناسب‌تر است --}}
+            {{-- @if ($posts->hasMorePages())
+                <div class="flex justify-center mt-8">
+                    <button id="load-more" data-next-page="{{ $posts->currentPage() + 1 }}"
+                        class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                        نمایش بیشتر
+                    </button>
+                </div>
+            @endif --}}
+
+            <div class="d-flex flex-column align-items-center mt-4 gap-3">
+                {{-- {{ $posts->links('pagination::simple-tailwind') }} --}}
+                {{ $posts->links('vendor.pagination.custom') }}
+            </div>
+
         </div>
     </div>
+
+    {{-- Load More (AJAX) — غیرفعال شده، pagination شماره‌ای برای پنل ادمین مناسب‌تر است --}}
+    {{-- <script>
+        document.getElementById('load-more')?.addEventListener('click', function() {
+            const button = this;
+            const page = button.dataset.nextPage;
+
+            // UX: جلوگیری از کلیک مجدد
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = 'در حال بارگذاری...';
+
+            fetch(`?page=${page}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(res => res.text())
+                .then(html => {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+
+                    const newRows = doc.querySelectorAll('#posts-body tr');
+                    const tbody = document.getElementById('posts-body');
+
+                    newRows.forEach(row => {
+                        row.classList.add('fade-in');
+                        tbody.appendChild(row);
+                    });
+
+                    // دکمه صفحه بعد
+                    const newButton = doc.getElementById('load-more');
+
+                    if (newButton) {
+                        button.dataset.nextPage = newButton.dataset.nextPage;
+                        button.disabled = false;
+                        button.textContent = originalText;
+                    } else {
+                        button.outerHTML =
+                            '<span class="text-gray-500 mt-4 block">پست دیگری وجود ندارد</span>';
+                    }
+                })
+                .catch(() => {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                    alert('خطا در دریافت اطلاعات');
+                });
+        });
+    </script> --}}
+
 </x-app-layout>

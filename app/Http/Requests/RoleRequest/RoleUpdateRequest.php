@@ -3,7 +3,6 @@
 namespace App\Http\Requests\RoleRequest;
 
 use Illuminate\Validation\Rule;
-
 class RoleUpdateRequest extends BaseRoleRequest
 {
     /**

@@ -13,7 +13,6 @@ class PostPresenter
         $this->post = $post;
     }
 
-
     public function indexRout()
     {
         return auth()->guard('admin')->check()
@@ -54,8 +53,14 @@ class PostPresenter
         : route('posts.destroy', $this->post->id);
     }
 
-    public function name()
+    public function title()
     {
+        return $this->post->title;
+    }
+
+    public function published()
+    {
+        return $this->post->published;
     }
 
 }

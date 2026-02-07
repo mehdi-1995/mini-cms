@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Services\PostService;
+use Illuminate\Support\Facades\Gate;
+use App\Presenters\PostPagePresenter;
 
 class PostController extends Controller
 {
@@ -18,7 +20,9 @@ class PostController extends Controller
     {
         $this->authorize('viewAny', Post::class);
         $posts = $this->service->getAll();
-        return view('posts.index', compact('posts'));
+        $canManagePosts = Gate::allows('updateAny', Post::class);
+        $postPage  = new PostPagePresenter;
+        return view('posts.index', compact('posts', 'canManagePosts', 'postPage'));
     }
 
     /**

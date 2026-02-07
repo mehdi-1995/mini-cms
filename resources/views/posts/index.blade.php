@@ -8,7 +8,7 @@
     <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="flex justify-end mb-4">
             @role('super-admin|admin|editor|author')
-                <a href="{{ $post->createRout() }}"
+                <a href="{{ $postPage->createRout() }}"
                     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                     ایجاد پست جدید
                 </a>
@@ -25,33 +25,47 @@
                             نویسنده</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                             وضعیت</th>
-                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            عملیات</th>
+                        @if ($canManagePosts)
+                            <th
+                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                عملیات
+                            </th>
+                        @else
+                            <th
+                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            </th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody id="posts-body" class="bg-white divide-y divide-gray-200">
                     @foreach ($posts as $post)
                         <tr>
-                            <td class="px-6 py-4 text-right">{{ $post->title() }}</td>
+                            <td class="px-6 py-4 text-right">{{ $post->present()->title() }}</td>
                             <td class="px-6 py-4 text-right">{{ $post->user->name ?? 'نامشخص' }}</td>
                             <td class="px-6 py-4 text-right">
-                                @if ($post->published())
+                                @if ($post->present()->published())
                                     <span class="text-green-600 font-semibold">منتشر شده</span>
                                 @else
                                     <span class="text-red-600 font-semibold">پیش‌نویس</span>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 text-center space-x-2">
-                                <a href="{{ $post->editRout() }}"
-                                    class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                <form action="{{ $post->destroyRout() }}" method="POST" class="inline-block"
-                                    onsubmit="return confirm('آیا مطمئن هستید؟')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
-                                </form>
-                            </td>
+                            @if ($canManagePosts)
+                                @can('update', $post)
+                                    <td class="px-6 py-4 text-center space-x-2">
+                                        <a href="{{ $post->present()->editRout() }}"
+                                            class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
+                                        <form action="{{ $post->present()->destroyRout() }}" method="POST" class="inline-block"
+                                            onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
+                                        </form>
+                                    </td>
+                                @endcan
+                            @else
+                                <td class="px-6 py-4 text-center text-gray-300">—</td>
+                            @endif
                         </tr>
                     @endforeach
                     @if ($posts->isEmpty())
@@ -72,7 +86,7 @@
                 </div>
             @endif --}}
 
-            <div class="d-flex flex-column align-items-center mt-4 gap-3">
+            <div class="flex flex-col items-center mt-4 gap-3">
                 {{-- {{ $posts->links('pagination::simple-tailwind') }} --}}
                 {{ $posts->links('vendor.pagination.custom') }}
             </div>

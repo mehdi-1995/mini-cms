@@ -13,25 +13,6 @@ class PostPresenter
         $this->post = $post;
     }
 
-    public function indexRout()
-    {
-        return auth()->guard('admin')->check()
-        ? route('admin.posts.index') : route('posts.index');
-    }
-
-    public function createRout()
-    {
-        return auth()->guard('admin')->check()
-        ? route('admin.posts.create') : route('posts.create');
-    }
-
-    public function storeRout()
-    {
-        return auth()->guard('admin')->check()
-        ? route('admin.posts.store')
-        : route('posts.store');
-    }
-
     public function editRout()
     {
         return auth()->guard('admin')->check()

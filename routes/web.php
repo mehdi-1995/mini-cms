@@ -97,8 +97,6 @@ Route::prefix('admin')->as('admin.')->group(function () {
     });
 });
 
-
-
 Route::get('/debug-locale', function () {
     return [
         'current_locale' => app()->getLocale(),

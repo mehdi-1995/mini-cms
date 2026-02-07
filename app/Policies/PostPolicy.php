@@ -6,10 +6,11 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Admin;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Authenticatable;
 
 class PostPolicy
 {
-    public function before(User $user, $ability)
+    public function before(Authenticatable $user, $ability)
     {
         // اگر کاربر Admin از گارد admin است
         if ($user instanceof Admin) {
@@ -37,11 +38,6 @@ class PostPolicy
      */
     public function create(User $user): bool
     {
-        if ($user instanceof Admin) {
-            return true; // Admin می‌تواند ایجاد کند
-        }
-
-        // برای گارد User: فقط author و editor
         return $user->hasRole('author|editor');
     }
 
@@ -50,11 +46,6 @@ class PostPolicy
      */
     public function update(User $user, Post $post): bool
     {
-        if ($user instanceof Admin) {
-            return true; // Admin همه پست‌ها
-        }
-
-        // Author فقط پست خودش
         if ($user->hasRole('author')) {
             return $user->id === $post->user_id;
         }
@@ -67,15 +58,19 @@ class PostPolicy
         return false;
     }
 
+    public function updateAny(User $user): bool
+    {
+        return Post::query()
+            ->where('user_id', $user->id)
+            ->exists()
+            || $user->hasRole('editor|author');
+    }
+
     /**
      * Determine whether the user can delete the model.
      */
     public function delete(User $user, Post $post): bool
     {
-        if ($user instanceof Admin) {
-            return true; // Admin همه پست‌ها
-        }
-
         if ($user->hasRole('editor')) {
             return true; // Editor همه پست‌ها
         }

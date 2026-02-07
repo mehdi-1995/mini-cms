@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 
 class DashboardController extends Controller
 {
@@ -14,13 +15,15 @@ class DashboardController extends Controller
         $draftPosts       = Post::where('published', false)->count();
         $totalUsers       = User::count();
         $latestPosts      = Post::latest()->take(5)->get();
+        $canManagePosts   = Gate::allows('updateAny', Post::class);
 
         return view('dashboard', compact(
             'totalPosts',
             'publishedPosts',
             'draftPosts',
             'totalUsers',
-            'latestPosts'
+            'latestPosts',
+            'canManagePosts'
         ));
     }
 }

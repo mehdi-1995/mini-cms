@@ -7,6 +7,7 @@
                 <a href="{{ route('admin.dashboard') }}" class="block hover:bg-gray-700 p-2 rounded">Dashboard</a>
                 <a href="{{ route('admin.roles.index') }}" class="block hover:bg-gray-700 p-2 rounded">Roles</a>
                 <a href="{{ route('admin.users.index') }}" class="block hover:bg-gray-700 p-2 rounded">Users</a>
+                <a href="{{ route('admin.posts.index') }}" class="block hover:bg-gray-700 p-2 rounded">Posts</a>
             </nav>
 
             <form method="POST" action="{{ route('admin.logout') }}" class="mt-6">

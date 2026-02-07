@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Services\PostService;
-use Illuminate\Support\Facades\Gate;
-use App\Presenters\PostPagePresenter;
+use App\ViewModels\Post\PostIndexViewModel;
 
 class PostController extends Controller
 {
@@ -19,10 +18,9 @@ class PostController extends Controller
     public function index()
     {
         $this->authorize('viewAny', Post::class);
-        $posts = $this->service->getAll();
-        $canManagePosts = Gate::allows('updateAny', Post::class);
-        $postPage  = new PostPagePresenter;
-        return view('posts.index', compact('posts', 'canManagePosts', 'postPage'));
+        $posts = $this->service->getAllPaginated();
+        $vm = new PostIndexViewModel($posts);
+        return view('posts.index', $vm->toArray());
     }
 
     /**

@@ -3,16 +3,12 @@
 namespace App\Http\Services;
 
 use App\Models\Post;
-use App\Presenters\PostPresenter;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class PostService
 {
-    public function getAll($perPage = 6)
+    public function getAllPaginated($perPage = 6): LengthAwarePaginator
     {
-        // return Post::paginate($perPage)
-        // ->through(fn (Post $post) => $post->present());
-        // return Post::paginate($perPage)->map(fn (Post $post) => $post->present());
-        // return Post::all()->through(fn (Post $post) => new PostPresenter($post));
         return Post::with('user')->paginate($perPage);
     }
 

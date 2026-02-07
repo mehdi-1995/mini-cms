@@ -7,12 +7,12 @@
 
     <div class="py-6 max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="flex justify-end mb-4">
-            @role('super-admin|admin|editor|author')
-                <a href="{{ $postPage->createRout() }}"
+            @if ($vm->canCreate())
+                <a href="{{ $vm->createRoute() }}"
                     class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                     ایجاد پست جدید
                 </a>
-            @endrole
+            @endif
         </div>
 
         <div class="bg-white shadow-sm sm:rounded-lg p-6">
@@ -25,7 +25,7 @@
                             نویسنده</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                             وضعیت</th>
-                        @if ($canManagePosts)
+                        @if ($vm->canManagePosts())
                             <th
                                 class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                                 عملیات
@@ -38,31 +38,31 @@
                     </tr>
                 </thead>
                 <tbody id="posts-body" class="bg-white divide-y divide-gray-200">
-                    @foreach ($posts as $post)
+                    @foreach ($rows as $row)
                         <tr>
-                            <td class="px-6 py-4 text-right">{{ $post->present()->title() }}</td>
-                            <td class="px-6 py-4 text-right">{{ $post->user->name ?? 'نامشخص' }}</td>
+                            <td class="px-6 py-4 text-right">{{ $row->title() }}</td>
+                            <td class="px-6 py-4 text-right">{{ $row->authorName() }}</td>
                             <td class="px-6 py-4 text-right">
-                                @if ($post->present()->published())
+                                @if ($row->isPublished())
                                     <span class="text-green-600 font-semibold">منتشر شده</span>
                                 @else
                                     <span class="text-red-600 font-semibold">پیش‌نویس</span>
                                 @endif
                             </td>
-                            @if ($canManagePosts)
-                                @can('update', $post)
+                            @if ($vm->canManagePosts())
+                                @if ($vm->canUpdate($post))
                                     <td class="px-6 py-4 text-center space-x-2">
-                                        <a href="{{ $post->present()->editRout() }}"
+                                        <a href="{{ $vm->editRoute($post) }}"
                                             class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                        <form action="{{ $post->present()->destroyRout() }}" method="POST" class="inline-block"
-                                            onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                        <form action="{{ $vm->destroyRoute($post) }}" method="POST"
+                                            class="inline-block" onsubmit="return confirm('آیا مطمئن هستید؟')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
                                                 class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
                                         </form>
                                     </td>
-                                @endcan
+                                @endif
                             @else
                                 <td class="px-6 py-4 text-center text-gray-300">—</td>
                             @endif
@@ -87,8 +87,8 @@
             @endif --}}
 
             <div class="flex flex-col items-center mt-4 gap-3">
-                {{-- {{ $posts->links('pagination::simple-tailwind') }} --}}
-                {{ $posts->links('vendor.pagination.custom') }}
+                {{-- {{ $vm->paginator()->links('pagination::simple-tailwind') }} --}}
+                {{ $vm->paginator()->links('vendor.pagination.custom') }}
             </div>
 
         </div>

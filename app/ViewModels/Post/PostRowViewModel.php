@@ -5,12 +5,14 @@
 namespace App\ViewModels\Post;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Gate;
 
 class PostRowViewModel
 {
     public function __construct(
         protected Post $post
-    ) {}
+    ) {
+    }
 
     public function title(): string
     {
@@ -27,8 +29,22 @@ class PostRowViewModel
         return $this->post->user->name ?? 'نامشخص';
     }
 
-    public function post(): Post
+    public function canUpdate(): bool
     {
-        return $this->post; // اگر هنوز جایی خود مدل لازم شد
+        return Gate::allows('update', $this->post);
+    }
+
+    public function editRoute(): string
+    {
+        return auth()->guard('admin')->check()
+        ? route('admin.posts.edit', $this->post)
+        : route('posts.edit', $this->post);
+    }
+
+    public function destroyRoute(): string
+    {
+        return auth()->guard('admin')->check()
+        ? route('admin.posts.destroy', $this->post)
+        : route('posts.destroy', $this->post);
     }
 }

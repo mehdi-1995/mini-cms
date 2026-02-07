@@ -50,11 +50,11 @@
                                 @endif
                             </td>
                             @if ($vm->canManagePosts())
-                                @if ($vm->canUpdate($post))
+                                @if ($row->canUpdate())
                                     <td class="px-6 py-4 text-center space-x-2">
-                                        <a href="{{ $vm->editRoute($post) }}"
+                                        <a href="{{ $row->editRoute() }}"
                                             class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                        <form action="{{ $vm->destroyRoute($post) }}" method="POST"
+                                        <form action="{{ $row->destroyRoute() }}" method="POST"
                                             class="inline-block" onsubmit="return confirm('آیا مطمئن هستید؟')">
                                             @csrf
                                             @method('DELETE')

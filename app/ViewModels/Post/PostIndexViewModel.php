@@ -3,7 +3,6 @@
 namespace App\ViewModels\Post;
 
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -31,21 +30,7 @@ class PostIndexViewModel
             : route('posts.create');
     }
 
-    public function editRoute(Post $post): string
-    {
-        return auth()->guard('admin')->check()
-        ? route('admin.posts.edit', $post)
-        : route('posts.edit', $post);
-    }
-
-    public function destroyRoute(Post $post): string
-    {
-        return auth()->guard('admin')->check()
-        ? route('admin.posts.destroy', $post)
-        : route('posts.destroy', $post);
-    }
-
-    public function rows()
+    public function rows(): LengthAwarePaginator
     {
         return $this->posts
             ->through(fn ($post) => new PostRowViewModel($post));

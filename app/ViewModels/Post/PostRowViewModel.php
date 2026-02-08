@@ -34,6 +34,11 @@ class PostRowViewModel
         return Gate::allows('update', $this->post);
     }
 
+    public function canDelete(): bool
+    {
+        return Gate::allows('delete', $this->post);
+    }
+
     public function editRoute(): string
     {
         return request()->routeIs('admin.*')

@@ -50,10 +50,12 @@
                                 @endif
                             </td>
                             @if ($vm->canManagePosts())
-                                @if ($row->canUpdate())
-                                    <td class="px-6 py-4 text-center space-x-2">
+                                <td class="px-6 py-4 text-center space-x-2">
+                                    @if ($row->canUpdate())
                                         <a href="{{ $row->editRoute() }}"
                                             class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
+                                    @endif
+                                    @if ($row->canDelete())
                                         <form action="{{ $row->destroyRoute() }}" method="POST" class="inline-block"
                                             onsubmit="return confirm('آیا مطمئن هستید؟')">
                                             @csrf
@@ -61,8 +63,8 @@
                                             <button type="submit"
                                                 class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
                                         </form>
-                                    </td>
-                                @endif
+                                    @endif
+                                </td>
                             @else
                                 <td class="px-6 py-4 text-center text-gray-300">—</td>
                             @endif

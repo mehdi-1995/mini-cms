@@ -10,17 +10,20 @@ use Illuminate\Contracts\Auth\Authenticatable;
 
 class PostPolicy
 {
-    public function before(Authenticatable $user, $ability)
+    private function isAdmin(Authenticatable $actor): bool
     {
-        // اگر کاربر Admin از گارد admin است
-        if ($user instanceof Admin) {
-            return true; // دسترسی کامل
-        }
+        return $actor instanceof Admin;
     }
+
+    private function isUser(Authenticatable $actor): bool
+    {
+        return $actor instanceof User;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
-    public function viewAny(User $user): bool
+    public function viewAny(Authenticatable $actor): bool
     {
         return true;
     }
@@ -28,7 +31,7 @@ class PostPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Post $post): bool
+    public function view(Authenticatable $actor, Post $post): bool
     {
         return true;
     }
@@ -36,47 +39,96 @@ class PostPolicy
     /**
      * Determine whether the user can create models.
      */
-    public function create(User $user): bool
+    public function create(Authenticatable $actor): bool
     {
-        return $user->hasRole('author|editor');
-    }
 
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Post $post): bool
-    {
-        if ($user->hasRole('author')) {
-            return $user->id === $post->user_id;
+        if ($this->isAdmin($actor)) {
+            return true;
         }
 
-        // Editor همه پست‌ها
-        if ($user->hasRole('editor')) {
-            return true; // Editor همه پست‌ها
+        if ($this->isUser($actor)) {
+
+            if (! $actor instanceof User) {
+                return false;
+            }
+
+            return $actor->hasAnyRole(['author', 'editor']);
         }
 
         return false;
     }
 
-    public function updateAny(User $user): bool
+    /**
+     * Determine whether the user can update the model.
+     */
+    public function update(Authenticatable $actor, Post $post): bool
     {
-        return Post::query()
-            ->where('user_id', $user->id)
-            ->exists()
-            || $user->hasRole('editor|author');
+
+        if ($this->isAdmin($actor)) {
+            return true;
+        }
+
+        if ($this->isUser($actor)) {
+
+            if (! $actor instanceof User) {
+                return false;
+            }
+
+            if ($actor->hasRole('author')) {
+                return $actor->id === $post->user_id;
+            }
+
+            // Editor همه پست‌ها
+            if ($actor->hasRole('editor')) {
+                return true; // Editor همه پست‌ها
+            }
+
+        }
+
+        return false;
+    }
+
+    public function updateAny(Authenticatable $actor): bool
+    {
+
+        if ($this->isAdmin($actor)) {
+            return true;
+        }
+
+        if ($this->isUser($actor)) {
+
+            if (! $actor instanceof User) {
+                return false;
+            }
+
+            return $actor->hasRole('editor');
+        }
+
+        return false;
+
     }
 
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Post $post): bool
+    public function delete(Authenticatable $actor, Post $post): bool
     {
-        if ($user->hasRole('editor')) {
-            return true; // Editor همه پست‌ها
+        if ($this->isAdmin($actor)) {
+            return true;
         }
 
-        if ($user->hasRole('author')) {
-            return $user->id === $post->user_id; // Author فقط پست خودش
+        if ($this->isUser($actor)) {
+            if (! $actor instanceof User) {
+                return false;
+            }
+
+            if ($actor->hasRole('editor')) {
+                return true; // Editor همه پست‌ها
+            }
+
+            if ($actor->hasRole('author')) {
+                return $actor->id === $post->user_id; // Author فقط پست خودش
+            }
         }
 
         return false;

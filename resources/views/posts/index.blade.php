@@ -25,16 +25,9 @@
                             نویسنده</th>
                         <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                             وضعیت</th>
-                        @if ($vm->canManagePosts())
-                            <th
-                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                عملیات
-                            </th>
-                        @else
-                            <th
-                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            </th>
-                        @endif
+                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            عملیات
+                        </th>
                     </tr>
                 </thead>
                 <tbody id="posts-body" class="bg-white divide-y divide-gray-200">
@@ -49,25 +42,24 @@
                                     <span class="text-red-600 font-semibold">پیش‌نویس</span>
                                 @endif
                             </td>
-                            @if ($vm->canManagePosts())
-                                <td class="px-6 py-4 text-center space-x-2">
-                                    @if ($row->canUpdate())
-                                        <a href="{{ $row->editRoute() }}"
-                                            class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                    @endif
-                                    @if ($row->canDelete())
-                                        <form action="{{ $row->destroyRoute() }}" method="POST" class="inline-block"
-                                            onsubmit="return confirm('آیا مطمئن هستید؟')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit"
-                                                class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
-                                        </form>
-                                    @endif
-                                </td>
-                            @else
-                                <td class="px-6 py-4 text-center text-gray-300">—</td>
-                            @endif
+                            <td class="px-6 py-4 text-center space-x-2">
+                                @if ($row->canUpdate())
+                                    <a href="{{ $row->editRoute() }}"
+                                        class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
+                                @endif
+                                @if ($row->canDelete())
+                                    <form action="{{ $row->destroyRoute() }}" method="POST" class="inline-block"
+                                        onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700">حذف</button>
+                                    </form>
+                                @endif
+                                @if (!$row->canUpdate() && !$row->canDelete())
+                                    <span class="text-gray-300">—</span>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                     @if ($posts->isEmpty())

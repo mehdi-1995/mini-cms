@@ -78,7 +78,7 @@ class PostPolicyTest extends TestCase
     {
         $admin = Admin::factory()->create();
         $admin->assignRole('super-admin');
-        
+
         $post = Post::factory()->create();
 
         $this->assertTrue(Gate::forUser($admin)->allows('create', Post::class));
@@ -101,6 +101,5 @@ class PostPolicyTest extends TestCase
         $this->assertTrue(Gate::forUser($editor)->allows('updateAny', Post::class));
         $this->assertTrue(Gate::forUser($admin)->allows('updateAny', Post::class));
     }
-
 
 }

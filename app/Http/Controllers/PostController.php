@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Services\PostService;
 use App\ViewModels\Post\PostIndexViewModel;
 use App\ViewModels\Post\PostCreateViewModel;
+use App\Http\Requests\PostRequest\PostStoreRequest;
 
 class PostController extends Controller
 {
@@ -37,13 +38,19 @@ class PostController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(PostStoreRequest $request)
     {
-        dd($request->all());
         try {
-            $this->service->store();
+            $user = auth()->user() ?? auth('admin')->user();
+            $this->service->store($request->validated(), $user);
+            return redirect()
+                ->route('posts.index')
+                ->with('success', __('messages.post_created'));
         } catch (\Exception $e) {
-            dd($e->getMessage());
+            report($e);
+            return back()
+                ->withInput()
+                ->with('error', __('messages.post_create_failed'));
         }
     }
 

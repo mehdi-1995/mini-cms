@@ -78,6 +78,12 @@
                 </tbody>
             </table>
 
+            <div class="flex flex-col items-center mt-4 gap-3">
+                {{-- {{ $vm->paginator()->links('pagination::simple-tailwind') }} --}}
+                {{-- {{ $vm->paginator()->links('vendor.pagination.custom') }} --}}
+                {{ $rows->links('vendor.pagination.custom') }}
+            </div>
+
             {{-- Load More (AJAX) — غیرفعال شده، pagination شماره‌ای برای پنل ادمین مناسب‌تر است --}}
             {{-- @if ($posts->hasMorePages())
                 <div class="flex justify-center mt-8">
@@ -87,12 +93,6 @@
                     </button>
                 </div>
             @endif --}}
-
-            <div class="flex flex-col items-center mt-4 gap-3">
-                {{-- {{ $vm->paginator()->links('pagination::simple-tailwind') }} --}}
-                {{-- {{ $vm->paginator()->links('vendor.pagination.custom') }} --}}
-                {{ $rows->links('vendor.pagination.custom') }}
-            </div>
 
         </div>
     </div>

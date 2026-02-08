@@ -6,6 +6,7 @@ use App\Models\Post;
 use Illuminate\Http\Request;
 use App\Http\Services\PostService;
 use App\ViewModels\Post\PostIndexViewModel;
+use App\ViewModels\Post\PostCreateViewModel;
 
 class PostController extends Controller
 {
@@ -28,7 +29,9 @@ class PostController extends Controller
      */
     public function create()
     {
-        return view();
+        $this->authorize('create', Post::class);
+        $vm = new PostCreateViewModel();
+        return view('posts.create', $vm->toArray());
     }
 
     /**
@@ -36,6 +39,7 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             $this->service->store();
         } catch (\Exception $e) {
@@ -54,9 +58,10 @@ class PostController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Post $post)
     {
-        return view();
+        // return view();
+        dd($post);
     }
 
     /**

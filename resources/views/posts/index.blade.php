@@ -54,8 +54,8 @@
                                     <td class="px-6 py-4 text-center space-x-2">
                                         <a href="{{ $row->editRoute() }}"
                                             class="px-2 py-1 bg-yellow-400 text-white rounded hover:bg-yellow-500">ویرایش</a>
-                                        <form action="{{ $row->destroyRoute() }}" method="POST"
-                                            class="inline-block" onsubmit="return confirm('آیا مطمئن هستید؟')">
+                                        <form action="{{ $row->destroyRoute() }}" method="POST" class="inline-block"
+                                            onsubmit="return confirm('آیا مطمئن هستید؟')">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
@@ -88,7 +88,8 @@
 
             <div class="flex flex-col items-center mt-4 gap-3">
                 {{-- {{ $vm->paginator()->links('pagination::simple-tailwind') }} --}}
-                {{ $vm->paginator()->links('vendor.pagination.custom') }}
+                {{-- {{ $vm->paginator()->links('vendor.pagination.custom') }} --}}
+                {{ $rows->links('vendor.pagination.custom') }}
             </div>
 
         </div>

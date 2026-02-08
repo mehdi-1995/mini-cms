@@ -7,7 +7,7 @@
 
     <div class="py-6 max-w-3xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white shadow-sm sm:rounded-lg p-6">
-            <form action="{{ $post->storeRout() }}" method="POST">
+            <form action="{{ $vm->storeRout() }}" method="POST">
                 @csrf
                 <div class="mb-4">
                     <label for="title" class="block text-gray-700 font-medium mb-2">عنوان</label>
@@ -29,7 +29,7 @@
                 </div>
 
                 <div class="flex justify-end">
-                    <a href="{{ $post->indexRout() }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 ml-2">انصراف</a>
+                    <a href="{{ $vm->indexRout() }}" class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 ml-2">انصراف</a>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">💾 ذخیره</button>
                 </div>
             </form>

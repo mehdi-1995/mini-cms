@@ -25,7 +25,20 @@ class PostPolicy
      */
     public function viewAny(Authenticatable $actor): bool
     {
-        return true;
+        if ($this->isAdmin($actor)) {
+            return true;
+        }
+
+        if ($this->isUser($actor)) {
+
+            if (! $actor instanceof User) {
+                return false;
+            }
+            
+            return $actor->hasRole('author') || $actor->hasRole('editor');
+        }
+
+        return false;
     }
 
     /**

@@ -36,14 +36,14 @@ class PostRowViewModel
 
     public function editRoute(): string
     {
-        return auth()->guard('admin')->check()
+        return request()->routeIs('admin.*')
         ? route('admin.posts.edit', $this->post)
         : route('posts.edit', $this->post);
     }
 
     public function destroyRoute(): string
     {
-        return auth()->guard('admin')->check()
+        return request()->routeIs('admin.*')
         ? route('admin.posts.destroy', $this->post)
         : route('posts.destroy', $this->post);
     }

@@ -3,6 +3,7 @@
 namespace App\ViewModels\Post;
 
 use App\Models\Post;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -25,20 +26,27 @@ class PostIndexViewModel
 
     public function createRoute(): string
     {
-        return auth()->guard('admin')->check()
+        return request()->routeIs('admin.*')
             ? route('admin.posts.create')
             : route('posts.create');
     }
+
+    // public function rows(): Collection
+    // {
+    //     return $this->posts
+    //     ->getCollection()
+    //     ->map(fn ($post) => new PostRowViewModel($post));
+    // }
+
+    // public function paginator()
+    // {
+    //     return $this->posts;
+    // }
 
     public function rows(): LengthAwarePaginator
     {
         return $this->posts
             ->through(fn ($post) => new PostRowViewModel($post));
-    }
-
-    public function paginator()
-    {
-        return $this->posts;
     }
 
     public function toArray(): array

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Http\Services\PostService;
 use App\ViewModels\Post\PostIndexViewModel;
@@ -40,11 +41,15 @@ class PostController extends Controller
      */
     public function store(PostStoreRequest $request)
     {
+        $this->authorize('create', Post::class);
         try {
-            $user = auth()->user() ?? auth('admin')->user();
-            $this->service->store($request->validated(), $user);
+            $actor = auth()->user() ?? auth('admin')->user();
+            $this->service->store($request->validated(), $actor);
+            $route = $actor instanceof Admin
+                ? 'admin.posts.index'
+                : 'posts.index';
             return redirect()
-                ->route('posts.index')
+                ->route($route)
                 ->with('success', __('messages.post_created'));
         } catch (\Exception $e) {
             report($e);

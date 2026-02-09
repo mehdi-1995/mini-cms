@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Gate;
 class PostRowViewModel
 {
     public function __construct(
-        protected Post $post
+        protected Post $post,
+        public bool $isAdmin = false,
     ) {
     }
 
@@ -41,14 +42,14 @@ class PostRowViewModel
 
     public function editRoute(): string
     {
-        return request()->routeIs('admin.*')
+        return $this->isAdmin
         ? route('admin.posts.edit', $this->post)
         : route('posts.edit', $this->post);
     }
 
     public function destroyRoute(): string
     {
-        return request()->routeIs('admin.*')
+        return $this->isAdmin
         ? route('admin.posts.destroy', $this->post)
         : route('posts.destroy', $this->post);
     }

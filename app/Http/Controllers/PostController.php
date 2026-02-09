@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\Admin;
 use Illuminate\Http\Request;
 use App\Http\Services\PostService;
+use App\ViewModels\Post\PostEditViewModel;
 use App\ViewModels\Post\PostIndexViewModel;
 use App\ViewModels\Post\PostCreateViewModel;
 use App\Http\Requests\PostRequest\PostStoreRequest;
@@ -22,7 +23,7 @@ class PostController extends Controller
     {
         $this->authorize('viewAny', Post::class);
         $posts = $this->service->getAllPaginated();
-        $vm = new PostIndexViewModel($posts);
+        $vm = new PostIndexViewModel($posts,request()->routeIs('admin.*'));
         return view('posts.index', $vm->toArray());
     }
 
@@ -72,15 +73,17 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        // return view();
-        dd($post);
+        $this->authorize('update', $post);
+        $vm = new PostEditViewModel($post,request()->routeIs('admin.*'));
+        return view('posts.edit', compact('vm'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Post $post)
     {
+        $this->authorize('update', $post);
         try {
             //code...
         } catch (\Throwable $th) {

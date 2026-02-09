@@ -10,7 +10,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 class PostIndexViewModel
 {
     public function __construct(
-        public LengthAwarePaginator $posts
+        public LengthAwarePaginator $posts,
+        public bool $isAdmin = false,
     ) {
     }
 
@@ -26,7 +27,7 @@ class PostIndexViewModel
 
     public function createRoute(): string
     {
-        return request()->routeIs('admin.*')
+        return $this->isAdmin
             ? route('admin.posts.create')
             : route('posts.create');
     }
@@ -46,7 +47,7 @@ class PostIndexViewModel
     public function rows(): LengthAwarePaginator
     {
         return $this->posts
-            ->through(fn ($post) => new PostRowViewModel($post));
+            ->through(fn ($post) => new PostRowViewModel($post,$this->isAdmin));
     }
 
     public function toArray(): array

@@ -10,6 +10,7 @@ use App\ViewModels\Post\PostEditViewModel;
 use App\ViewModels\Post\PostIndexViewModel;
 use App\ViewModels\Post\PostCreateViewModel;
 use App\Http\Requests\PostRequest\PostStoreRequest;
+use App\Http\Requests\PostRequest\PostUpdateRequest;
 
 class PostController extends Controller
 {
@@ -23,7 +24,7 @@ class PostController extends Controller
     {
         $this->authorize('viewAny', Post::class);
         $posts = $this->service->getAllPaginated();
-        $vm = new PostIndexViewModel($posts,request()->routeIs('admin.*'));
+        $vm = new PostIndexViewModel($posts, request()->routeIs('admin.*'));
         return view('posts.index', $vm->toArray());
     }
 
@@ -42,7 +43,6 @@ class PostController extends Controller
      */
     public function store(PostStoreRequest $request)
     {
-        $this->authorize('create', Post::class);
         try {
             $actor = auth()->user() ?? auth('admin')->user();
             $this->service->store($request->validated(), $actor);
@@ -74,20 +74,30 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         $this->authorize('update', $post);
-        $vm = new PostEditViewModel($post,request()->routeIs('admin.*'));
+        $vm = new PostEditViewModel($post, request()->routeIs('admin.*'));
         return view('posts.edit', compact('vm'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Post $post)
+    public function update(PostUpdateRequest $request, Post $post)
     {
         $this->authorize('update', $post);
         try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
+            $actor = auth()->user() ?? auth('admin')->user();
+            $this->service->update($request->validated(), $post, $actor);
+            $route = $actor instanceof Admin
+                ? 'admin.posts.index'
+                : 'posts.index';
+            return redirect()
+            ->route($route)
+            ->with('success', __('messages.post_updated'));
+        } catch (\Throwable $e) {
+            abort($e);
+            return back()
+                ->withInput()
+                ->with('error', __('messages.post_update_failed'));
         }
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Admin;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -27,5 +28,20 @@ class PostService
             'published' => $data['published'] ?? false,
             'user_id'   => $actor instanceof User ? $actor->id : null,
         ]);
+    }
+
+    public function update(array $data, Post $post, Authenticatable $actor)
+    {
+        if ($actor instanceof User) {
+            $data['user_id'] = $actor->id;
+        }
+
+        if ($actor instanceof Admin) {
+            $data['user_id'] = null;
+        }
+
+        $post->update($data);
+
+        return $post;
     }
 }

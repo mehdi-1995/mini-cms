@@ -23,10 +23,7 @@ class PostStoreRequest extends BasePostRequest
      */
     public function rules(): array
     {
-        return [
-            'title'     => ['required', 'string', 'max:255'],
-            'content'   => ['required', 'string'],
-            'published' => ['nullable', 'boolean'],
-        ];
+        return $this->baseRules();
     }
+
 }

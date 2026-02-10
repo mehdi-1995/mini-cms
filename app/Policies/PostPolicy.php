@@ -2,6 +2,7 @@
 
 namespace App\Policies;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Admin;
@@ -34,7 +35,7 @@ class PostPolicy
             if (! $actor instanceof User) {
                 return false;
             }
-            
+
             return $actor->hasRole('author') || $actor->hasRole('editor');
         }
 
@@ -142,6 +143,39 @@ class PostPolicy
             if ($actor->hasRole('author')) {
                 return $actor->id === $post->user_id; // Author فقط پست خودش
             }
+        }
+
+        return false;
+    }
+
+    public function submit(Authenticatable $actor, Post $post): bool
+    {
+
+        if ($this->isAdmin($actor)) {
+            return true;
+        }
+
+        if ($this->isUser($actor)) {
+            if (! $actor instanceof User) {
+                return false;
+            }
+            return $actor->isAuthor()
+            && $post->user_id === $actor->id;
+        }
+
+        return false;
+    }
+
+    public function publish(Authenticatable $actor, Post $post): bool
+    {
+        if ($this->isAdmin($actor)) {
+            return true;
+        }
+        if ($this->isUser($actor)) {
+            if (! $actor instanceof User) {
+                return false;
+            }
+            return $actor->isEditor();
         }
 
         return false;

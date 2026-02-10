@@ -38,6 +38,8 @@ Route::middleware(['auth','verified'])->group(function () {
         Route::get('/{post}/edit', [PostController::class, 'edit'])->name('edit');
         Route::put('/{post}', [PostController::class, 'update'])->name('update');
         Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
+        Route::post('/{post}/submit', [PostController::class, 'submit'])->name('submit');
+        Route::post('/{post}/publish', [PostController::class, 'publish'])->name('publish');
     });
 });
 
@@ -87,6 +89,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
             Route::get('/{post}/edit', [PostController::class, 'edit'])->name('edit');
             Route::put('/{post}', [PostController::class, 'update'])->name('update');
             Route::delete('/{post}', [PostController::class, 'destroy'])->name('destroy');
+            Route::post('/{post}/publish', [PostController::class, 'publish'])->name('publish');
         });
 
     });

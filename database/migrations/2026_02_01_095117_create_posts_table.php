@@ -14,6 +14,7 @@ return new class () extends Migration {
             $table->id();
             $table->string('title');
             $table->text('content');
+            $table->string('status')->default('draft')->index();
             $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
             $table->boolean('published')->default(false);
             $table->timestamps();

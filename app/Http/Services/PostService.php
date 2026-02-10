@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Admin;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Exceptions\PostCannotBeDeletedException;
+use DomainException;
 
 class PostService
 {
@@ -64,5 +66,36 @@ class PostService
                 throw new \RuntimeException('Post deletion failed.');
             }
         });
+    }
+
+    public function submitForReview(Post $post): Post
+    {
+        if ($post->status !== PostStatus::Draft) {
+            throw new DomainException('Post is not draft.');
+        }
+
+        $post->update([
+            'status' => PostStatus::Review,
+        ]);
+
+        return $post;
+    }
+
+    public function publish(Post $post, ?Authenticatable $user = null): void
+    {
+        if ($user instanceof Admin) {
+            $post->update([
+                'status' => PostStatus::Published,
+            ]);
+            return;
+        }
+
+        if ($post->status !== PostStatus::Review) {
+            throw new DomainException('Post is not ready to publish.');
+        }
+
+        $post->update([
+            'status' => PostStatus::Published,
+        ]);
     }
 }

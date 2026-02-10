@@ -12,6 +12,7 @@ use App\ViewModels\Post\PostIndexViewModel;
 use App\ViewModels\Post\PostCreateViewModel;
 use App\Http\Requests\PostRequest\PostStoreRequest;
 use App\Http\Requests\PostRequest\PostUpdateRequest;
+use DomainException;
 
 class PostController extends Controller
 {
@@ -123,7 +124,33 @@ class PostController extends Controller
             report($e);
             return back()
                 ->with('error', __('messages.post_delete_failed'));
-                
+
         }
     }
+
+    public function submit(Post $post)
+    {
+        $this->authorize('submit', $post);
+        try {
+            $this->service->submitForReview($post);
+            return back()->with('success', __('messages.post_submitted_successfully'));
+        } catch (DomainException $e) {
+            abort(403);
+        }
+    }
+
+    public function publish(Post $post)
+    {
+        $this->authorize('publish', $post);
+        $user = auth()->user() ?: auth('admin')->user();
+        try {
+            $this->service->publish($post, $user);
+            return redirect()
+                 ->back()
+                 ->with('success', 'Post published successfully.');
+        } catch (DomainException $e) {
+            abort(403);
+        }
+    }
+
 }

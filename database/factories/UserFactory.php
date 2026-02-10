@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Enums\PostStatus;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -63,6 +64,20 @@ class UserFactory extends Factory
                 ])
                 ->when(is_callable($callback), $callback),
             'ownedTeams'
+        );
+    }
+
+    public function author(): static
+    {
+        return $this->afterCreating(
+            fn (User $user) => $user->assignRole('author')
+        );
+    }
+
+    public function editor(): static
+    {
+        return $this->afterCreating(
+            fn (User $user) => $user->assignRole('editor')
         );
     }
 }

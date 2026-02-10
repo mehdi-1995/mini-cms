@@ -69,6 +69,22 @@ class PostWorkflowTest extends TestCase
     }
 
     /** @test */
+    public function editor_cannot_publish_draft_post()
+    {
+        $editor = User::factory()->editor()->create();
+        $post = Post::factory()->draft()->create();
+
+        $this->actingAs($editor)
+            ->post(route('posts.publish', $post))
+            ->assertForbidden();
+
+        $this->assertEquals(
+            PostStatus::Draft,
+            $post->fresh()->status
+        );
+    }
+
+    /** @test */
     public function admin_can_publish_any_post()
     {
         $admin = Admin::factory()->create();
@@ -83,7 +99,28 @@ class PostWorkflowTest extends TestCase
             $post->fresh()->status
         );
     }
-    
+
+    /** @test */
+    public function admin_can_publish_post_from_any_state()
+    {
+        $admin = Admin::factory()->create();
+
+        foreach ([PostStatus::Draft, PostStatus::Review, PostStatus::Published] as $status) {
+            $post = Post::factory()->state([
+                'status' => $status,
+            ])->create();
+
+            $this->actingAs($admin, 'admin')
+                ->post(route('admin.posts.publish', $post))
+                ->assertRedirect();
+
+            $this->assertEquals(
+                PostStatus::Published,
+                $post->fresh()->status
+            );
+        }
+    }
+
     /** @test */
     public function author_cannot_publish_post()
     {

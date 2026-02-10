@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\PostCannotBeDeletedException;
 use App\Models\Post;
 use App\Models\Admin;
 use Illuminate\Http\Request;
@@ -104,12 +105,25 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Post $post)
     {
+        $this->authorize('delete', $post);
         try {
-            //code...
-        } catch (\Throwable $th) {
-            //throw $th;
+
+            $this->service->destroy($post);
+            return back()
+                ->with('success', __('messages.post_deleted'));
+
+        } catch (PostCannotBeDeletedException $e) {
+
+            return back()->with('error', $e->getMessage());
+
+        } catch (\Throwable $e) {
+
+            report($e);
+            return back()
+                ->with('error', __('messages.post_delete_failed'));
+                
         }
     }
 }

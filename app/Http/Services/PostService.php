@@ -5,8 +5,10 @@ namespace App\Http\Services;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Admin;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator;
+use App\Exceptions\PostCannotBeDeletedException;
 
 class PostService
 {
@@ -43,5 +45,24 @@ class PostService
         $post->update($data);
 
         return $post;
+    }
+
+    public function destroy(Post $post)
+    {
+        DB::transaction(function () use ($post) {
+
+            if ($post->published) {
+                throw new PostCannotBeDeletedException('Published posts cannot be deleted.');
+            }
+
+            // اگر فردا کامنت اضافه شد
+            // if ($post->comments()->exists()) {
+            //     throw new PostCannotBeDeletedException('Post has comments.');
+            // }
+
+            if (! $post->delete()) {
+                throw new \RuntimeException('Post deletion failed.');
+            }
+        });
     }
 }

@@ -5,7 +5,6 @@ namespace Tests\Feature\Posts;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Admin;
-use Symfony\Component\Routing\Route;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class PostStoreTest extends TestCase

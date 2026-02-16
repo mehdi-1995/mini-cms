@@ -4,6 +4,7 @@
 
 namespace App\ViewModels\Post;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
 use Illuminate\Support\Facades\Gate;
 
@@ -22,7 +23,7 @@ class PostRowViewModel
 
     public function isPublished(): bool
     {
-        return (bool) $this->post->published;
+        return $this->post->status === PostStatus::Published;
     }
 
     public function authorName(): string

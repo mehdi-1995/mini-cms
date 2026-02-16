@@ -2,11 +2,11 @@
 
 namespace Database\Seeders;
 
+use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Models\User;
 use Faker\Factory as Faker;
 use Illuminate\Database\Seeder;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class PostSeeder extends Seeder
 {
@@ -28,11 +28,24 @@ class PostSeeder extends Seeder
         // ایجاد 30 پست تصادفی
         for ($i = 1; $i <= 30; $i++) {
             $user = $users->isNotEmpty() ? $users->random() : null; // کاربر تصادفی
+
+            $status = match (true) {
+                $user?->isAuthor() => $faker->randomElement([
+                    PostStatus::Draft,
+                    PostStatus::Review,
+                ]),
+                $user?->isEditor() => $faker->randomElement([
+                    PostStatus::Review,
+                    PostStatus::Published,
+                ]),
+                default => PostStatus::Draft,
+            };
+
             Post::create([
                 'title' => $faker->sentence(6),
                 'content' => $faker->paragraph(4),
                 'user_id' => $user ? $user->id : null, // اختصاص به نویسنده تصادفی
-                'published' => $faker->boolean(70), // 70% احتمال منتشر شدن
+                'published' => $status,
             ]);
         }
 

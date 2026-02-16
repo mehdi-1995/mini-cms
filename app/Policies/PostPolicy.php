@@ -2,11 +2,9 @@
 
 namespace App\Policies;
 
-use App\Enums\PostStatus;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Admin;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class PostPolicy
@@ -150,7 +148,6 @@ class PostPolicy
 
     public function submit(Authenticatable $actor, Post $post): bool
     {
-
         if ($this->isAdmin($actor)) {
             return true;
         }

@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\PostCannotBeDeletedException;
+use DomainException;
 use App\Models\Post;
+use App\Models\User;
 use App\Models\Admin;
-use Illuminate\Http\Request;
 use App\Http\Services\PostService;
+use App\Http\Services\PostWorkflowService;
 use App\ViewModels\Post\PostEditViewModel;
 use App\ViewModels\Post\PostIndexViewModel;
 use App\ViewModels\Post\PostCreateViewModel;
+use App\Exceptions\PostCannotBeDeletedException;
 use App\Http\Requests\PostRequest\PostStoreRequest;
 use App\Http\Requests\PostRequest\PostUpdateRequest;
-use DomainException;
 
 class PostController extends Controller
 {
-    public function __construct(private PostService $service)
+    public function __construct(private PostService $service, private PostWorkflowService $Workflow)
     {
     }
     /**
@@ -45,17 +46,34 @@ class PostController extends Controller
      */
     public function store(PostStoreRequest $request)
     {
+        $this->authorize('create', Post::class);
+        $actor = auth()->user() ?? auth('admin')->user();
         try {
-            $actor = auth()->user() ?? auth('admin')->user();
-            $this->service->store($request->validated(), $actor);
+
+            $post = $this->service->store($request->validated(), $actor);
+
+            if ($request->boolean('publish_action')) {
+                if ($actor instanceof User && $actor->isAuthor()) {
+                    $this->authorize('submit', $post);
+                    $this->Workflow->submitForReview($post);
+                } else {
+                    $this->authorize('publish', $post);
+                    $this->Workflow->publish($post, $actor);
+                }
+            }
+
             $route = $actor instanceof Admin
                 ? 'admin.posts.index'
                 : 'posts.index';
+
             return redirect()
                 ->route($route)
                 ->with('success', __('messages.post_created'));
+
         } catch (\Exception $e) {
+
             report($e);
+
             return back()
                 ->withInput()
                 ->with('error', __('messages.post_create_failed'));
@@ -86,17 +104,32 @@ class PostController extends Controller
     public function update(PostUpdateRequest $request, Post $post)
     {
         $this->authorize('update', $post);
+        $actor = auth()->user() ?? auth('admin')->user();
         try {
-            $actor = auth()->user() ?? auth('admin')->user();
             $this->service->update($request->validated(), $post, $actor);
+
+            if ($request->boolean('publish_action')) {
+                if ($actor instanceof User && $actor->isAuthor()) {
+                    $this->authorize('submit', $post);
+                    $this->Workflow->submitForReview($post);
+                } else {
+                    $this->authorize('publish', $post);
+                    $this->Workflow->publish($post, $actor);
+                }
+            }
+
             $route = $actor instanceof Admin
                 ? 'admin.posts.index'
                 : 'posts.index';
+
             return redirect()
             ->route($route)
             ->with('success', __('messages.post_updated'));
+
         } catch (\Throwable $e) {
+
             abort($e);
+
             return back()
                 ->withInput()
                 ->with('error', __('messages.post_update_failed'));
@@ -132,8 +165,9 @@ class PostController extends Controller
     {
         $this->authorize('submit', $post);
         try {
-            $this->service->submitForReview($post);
-            return back()->with('success', __('messages.post_submitted_successfully'));
+            $this->Workflow->submitForReview($post);
+            return back()
+                   ->with('success', __('messages.post_submitted_successfully'));
         } catch (DomainException $e) {
             abort(403);
         }
@@ -144,7 +178,7 @@ class PostController extends Controller
         $this->authorize('publish', $post);
         $user = auth()->user() ?: auth('admin')->user();
         try {
-            $this->service->publish($post, $user);
+            $this->Workflow->publish($post, $user);
             return redirect()
                  ->back()
                  ->with('success', 'Post published successfully.');

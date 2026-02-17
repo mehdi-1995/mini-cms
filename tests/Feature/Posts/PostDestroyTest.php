@@ -109,7 +109,7 @@ class PostDestroyTest extends TestCase
     public function published_post_cannot_be_deleted()
     {
         $editor = User::factory()->create()->assignRole('editor');
-        $post = Post::factory()->create(['published' => true]);
+        $post = Post::factory()->create(['status' => 'published']);
 
         $this->actingAs($editor)
             ->delete(route('posts.destroy', $post))

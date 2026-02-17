@@ -21,18 +21,11 @@
                         class="w-full border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">{{ old('content') }}</textarea>
                 </div>
 
-                <div class="mb-4">
-                    <label class="inline-flex items-center">
-                        <input type="checkbox" name="publish_action" value="1" class="form-checkbox">
-                        <span class="ml-2 text-gray-700">ارسال برای انتشار</span>
-                    </label>
-                </div>
-
                 <div class="flex justify-end">
                     <a href="{{ $vm->indexRout() }}"
                         class="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 ml-2">انصراف</a>
                     <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">💾
-                        ذخیره</button>
+                      ذخیره به عنوان پیش نویس </button>
                 </div>
             </form>
         </div>

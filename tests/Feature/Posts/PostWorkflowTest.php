@@ -2,13 +2,12 @@
 
 namespace Tests\Feature\Posts;
 
-use App\Enums\PostStatus;
-use App\Models\Admin;
+use Tests\TestCase;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\Admin;
+use App\Enums\PostStatus;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class PostWorkflowTest extends TestCase
 {
@@ -53,6 +52,40 @@ class PostWorkflowTest extends TestCase
     }
 
     /** @test */
+    public function author_cannot_submit_post_that_is_already_in_review()
+    {
+        $author = User::factory()->author()->create();
+
+        $post = Post::factory()->review()->for($author)->create();
+
+        $this->actingAs($author)
+            ->post(route('posts.submit', $post))
+            ->assertForbidden();
+
+        $this->assertEquals(
+            PostStatus::Review,
+            $post->fresh()->status
+        );
+    }
+
+    /** @test */
+    public function editor_cannot_submit_post_for_review()
+    {
+        $editor = User::factory()->editor()->create();
+
+        $post = Post::factory()->draft()->create();
+
+        $this->actingAs($editor)
+            ->post(route('posts.submit', $post))
+            ->assertForbidden();
+
+        $this->assertEquals(
+            PostStatus::Draft,
+            $post->fresh()->status
+        );
+    }
+
+    /** @test */
     public function editor_can_publish_review_post()
     {
         $editor = User::factory()->editor()->create();
@@ -83,6 +116,24 @@ class PostWorkflowTest extends TestCase
             $post->fresh()->status
         );
     }
+
+    /** @test */
+    public function editor_cannot_publish_already_published_post()
+    {
+        $editor = User::factory()->editor()->create();
+
+        $post = Post::factory()->published()->create();
+
+        $this->actingAs($editor)
+            ->post(route('posts.publish', $post))
+            ->assertForbidden();
+
+        $this->assertEquals(
+            PostStatus::Published,
+            $post->fresh()->status
+        );
+    }
+
 
     /** @test */
     public function admin_can_publish_any_post()

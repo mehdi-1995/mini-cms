@@ -3,13 +3,24 @@
 namespace App\ViewModels\Post;
 
 use App\Models\Post;
+use Illuminate\Support\Facades\Gate;
 
 class PostEditViewModel
 {
     public function __construct(
-        private Post $post,
+        public Post $post,
         private bool $isAdmin = false
     ) {
+    }
+
+    public function canSubmit(): bool
+    {
+        return Gate::allows('submit', $this->post);
+    }
+
+    public function canPublish(): bool
+    {
+        return Gate::allows('publish', $this->post);
     }
 
     public function updateRoute(): string
@@ -41,9 +52,15 @@ class PostEditViewModel
         return $this->post->content;
     }
 
+    public function post()
+    {
+        return $this->post;
+    }
 
     public function toArray(): array
     {
-        return ['vm' => $this];
+        return [
+            'vm' => $this
+        ];
     }
 }

@@ -52,15 +52,15 @@ class PostController extends Controller
 
             $post = $this->service->store($request->validated(), $actor);
 
-            if ($request->boolean('publish_action')) {
-                if ($actor instanceof User && $actor->isAuthor()) {
-                    $this->authorize('submit', $post);
-                    $this->Workflow->submitForReview($post);
-                } else {
-                    $this->authorize('publish', $post);
-                    $this->Workflow->publish($post, $actor);
-                }
-            }
+            // if ($request->boolean('publish_action')) {
+            //     if ($actor instanceof User && $actor->isAuthor()) {
+            //         $this->authorize('submit', $post);
+            //         $this->Workflow->submitForReview($post);
+            //     } else {
+            //         $this->authorize('publish', $post);
+            //         $this->Workflow->publish($post, $actor);
+            //     }
+            // }
 
             $route = $actor instanceof Admin
                 ? 'admin.posts.index'
@@ -108,15 +108,16 @@ class PostController extends Controller
         try {
             $this->service->update($request->validated(), $post, $actor);
 
-            if ($request->boolean('publish_action')) {
-                if ($actor instanceof User && $actor->isAuthor()) {
-                    $this->authorize('submit', $post);
-                    $this->Workflow->submitForReview($post);
-                } else {
-                    $this->authorize('publish', $post);
-                    $this->Workflow->publish($post, $actor);
-                }
-            }
+
+            // if ($request->boolean('publish_action')) {
+            //     if ($actor instanceof User && $actor->isAuthor()) {
+            //         $this->authorize('submit', $post);
+            //         $this->Workflow->submitForReview($post);
+            //     } else {
+            //         $this->authorize('publish', $post);
+            //         $this->Workflow->publish($post, $actor);
+            //     }
+            // }
 
             $route = $actor instanceof Admin
                 ? 'admin.posts.index'
@@ -128,7 +129,7 @@ class PostController extends Controller
 
         } catch (\Throwable $e) {
 
-            abort($e);
+            throw $e;
 
             return back()
                 ->withInput()

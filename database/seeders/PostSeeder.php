@@ -45,7 +45,7 @@ class PostSeeder extends Seeder
                 'title' => $faker->sentence(6),
                 'content' => $faker->paragraph(4),
                 'user_id' => $user ? $user->id : null, // اختصاص به نویسنده تصادفی
-                'published' => $status,
+                'status' => $status,
             ]);
         }
 

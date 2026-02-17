@@ -131,8 +131,7 @@ class PostUpdateTest extends TestCase
     {
         return [
             'title'     => 'Updated title',
-            'content'   => 'Updated content',
-            'published' => false,
+            'content'   => 'Updated content'
         ];
     }
 }

@@ -100,8 +100,7 @@ class PostStoreTest extends TestCase
     {
         return [
             'title'     => 'Test title',
-            'content'   => 'Test content',
-            'published' => true,
+            'content'   => 'Test content'
         ];
     }
 

@@ -34,7 +34,7 @@ class PostPolicy
                 return false;
             }
 
-            return $actor->hasRole('author') || $actor->hasRole('editor');
+            return $actor->hasAnyRole(['author', 'editor']);
         }
 
         return false;

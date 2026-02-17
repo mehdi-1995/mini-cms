@@ -20,7 +20,7 @@ class PostService
 
     public function getAllPublished($perPage = 6)
     {
-        return Post::where('published', 1)->latest()->paginate($perPage);
+        return Post::where('status',PostStatus::Published)->latest()->paginate($perPage);
     }
 
     public function store(array $data, Authenticatable $actor)

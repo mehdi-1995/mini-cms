@@ -79,6 +79,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
             Route::get('/{role}/edit', [RoleController::class,'edit'])->name('edit');
             Route::put('/{role}', [RoleController::class,'update'])->name('update');
             Route::delete('/{role}', [RoleController::class,'destroy'])->name('destroy');
+            Route::get('/permissions/{guard}', [RoleController::class, 'permissions'])->name('permissions');
         });
 
         // مدیریت کامل پست‌ها برای ادمین

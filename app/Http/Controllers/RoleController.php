@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidGuardException;
+use App\Exceptions\RoleHasUsersException;
 use App\Http\Services\RoleService;
 use Spatie\Permission\Models\Role;
 use App\Http\Requests\RoleRequest\RoleStoreRequest;
@@ -22,8 +24,8 @@ class RoleController extends Controller
 
     public function create()
     {
-        $permissions = $this->service->getAllPermissions();
-        return view('roles.create', compact('permissions'));
+        $guards = array_keys(config('auth.guards'));
+        return view('roles.create', compact('guards'));
     }
 
     public function store(RoleStoreRequest $request)
@@ -45,7 +47,7 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         $this->authorize('update', $role);
-        $permissions = $this->service->getAllPermissions();
+        $permissions = $this->service->getAllPermissions($role->guard_name);
         return view('roles.edit', compact('role', 'permissions'));
     }
 
@@ -68,9 +70,35 @@ class RoleController extends Controller
     public function destroy(Role $role)
     {
         $this->authorize('delete', $role);
-        $this->service->delete($role);
-        return redirect()
-            ->route('admin.roles.index')
-            ->with('success', __('messages.role_deleted', ['name' => $role->name]));
+        try {
+
+            $this->service->delete($role);
+            return redirect()
+                ->route('admin.roles.index')
+                ->with('success', __('messages.role_deleted', ['name' => $role->name]));
+
+        } catch (RoleHasUsersException $e) {
+
+            return back()->with('error', $e->getMessage());
+
+        } catch (\Exception $e) {
+
+            report($e);
+
+            return back()->with('error', __('messages.role_delete_failed'));
+        }
+    }
+
+    public function permissions(string $guard)
+    {
+        try {
+
+            return $this->service->permissionsForGuard($guard);
+
+        } catch (InvalidGuardException $e) {
+
+            abort(404);
+            
+        }
     }
 }

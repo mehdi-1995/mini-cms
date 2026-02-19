@@ -47,5 +47,4 @@ class PostFactory extends Factory
             'status' => PostStatus::Published,
         ]);
     }
-
 }

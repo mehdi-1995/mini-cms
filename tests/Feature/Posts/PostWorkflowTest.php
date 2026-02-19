@@ -55,7 +55,6 @@ class PostWorkflowTest extends TestCase
     public function author_cannot_submit_post_that_is_already_in_review()
     {
         $author = User::factory()->author()->create();
-
         $post = Post::factory()->review()->for($author)->create();
 
         $this->actingAs($author)
@@ -72,7 +71,6 @@ class PostWorkflowTest extends TestCase
     public function editor_cannot_submit_post_for_review()
     {
         $editor = User::factory()->editor()->create();
-
         $post = Post::factory()->draft()->create();
 
         $this->actingAs($editor)
@@ -121,7 +119,6 @@ class PostWorkflowTest extends TestCase
     public function editor_cannot_publish_already_published_post()
     {
         $editor = User::factory()->editor()->create();
-
         $post = Post::factory()->published()->create();
 
         $this->actingAs($editor)
@@ -170,6 +167,7 @@ class PostWorkflowTest extends TestCase
                 $post->fresh()->status
             );
         }
+
     }
 
     /** @test */

@@ -15,15 +15,7 @@ class BasePostRequest extends FormRequest
     {
         return [
             'title'     => ['required', 'string', 'max:255'],
-            'content'   => ['required', 'string'],
-            'published' => ['nullable', 'boolean'],
+            'content'   => ['required', 'string']
         ];
-    }
-
-    protected function prepareForValidation()
-    {
-        $this->merge([
-            'published' => $this->boolean('published'),
-        ]);
     }
 }

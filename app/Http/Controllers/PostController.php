@@ -108,7 +108,6 @@ class PostController extends Controller
         try {
             $this->service->update($request->validated(), $post, $actor);
 
-
             // if ($request->boolean('publish_action')) {
             //     if ($actor instanceof User && $actor->isAuthor()) {
             //         $this->authorize('submit', $post);
@@ -129,7 +128,7 @@ class PostController extends Controller
 
         } catch (\Throwable $e) {
 
-            throw $e;
+            report($e);
 
             return back()
                 ->withInput()
@@ -156,9 +155,9 @@ class PostController extends Controller
         } catch (\Throwable $e) {
 
             report($e);
+
             return back()
                 ->with('error', __('messages.post_delete_failed'));
-
         }
     }
 

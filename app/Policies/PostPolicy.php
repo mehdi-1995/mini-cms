@@ -75,7 +75,6 @@ class PostPolicy
      */
     public function update(Authenticatable $actor, Post $post): bool
     {
-
         if ($this->isAdmin($actor)) {
             return true;
         }
@@ -102,7 +101,6 @@ class PostPolicy
 
     public function updateAny(Authenticatable $actor): bool
     {
-
         if ($this->isAdmin($actor)) {
             return true;
         }
@@ -117,7 +115,6 @@ class PostPolicy
         }
 
         return false;
-
     }
 
     /**

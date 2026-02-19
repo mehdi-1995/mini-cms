@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests\PostRequest;
 
-use Illuminate\Foundation\Http\FormRequest;
-
 class PostUpdateRequest extends BasePostRequest
 {
     /**

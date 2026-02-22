@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use DomainException;
 use App\Models\Post;
-use App\Models\User;
 use App\Models\Admin;
 use App\Http\Services\PostService;
 use App\Http\Services\PostWorkflowService;
@@ -20,6 +19,7 @@ class PostController extends Controller
     public function __construct(private PostService $service, private PostWorkflowService $Workflow)
     {
     }
+    
     /**
      * Display a listing of the resource.
      */

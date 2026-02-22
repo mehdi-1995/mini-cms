@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests\RoleRequest;
 
+use Illuminate\Validation\Rule;
+
 class RoleStoreRequest extends BaseRoleRequest
 {
     /**
@@ -20,7 +22,8 @@ class RoleStoreRequest extends BaseRoleRequest
     public function rules(): array
     {
         return array_merge($this->baseRules(), [
-            'name' => ['required', 'string', 'unique:roles,name'],
+            'name' => ['required', 'string', Rule::unique('roles', 'name')],
+            'guard_name' => ['required', 'in:' . implode(',', array_keys(config('auth.guards')))],
         ]);
     }
 }

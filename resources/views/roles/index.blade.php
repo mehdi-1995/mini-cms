@@ -57,6 +57,7 @@
                     @endforeach
                 </tbody>
             </table>
+            {{ $roles->links('vendor.pagination.custom') }}
         </div>
     </div>
 </x-admin-layout>

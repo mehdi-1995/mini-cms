@@ -6,7 +6,6 @@ use Illuminate\Foundation\Http\FormRequest;
 
 abstract class BaseRoleRequest extends FormRequest
 {
-
     protected function baseRules(): array
     {
         return [
@@ -15,7 +14,7 @@ abstract class BaseRoleRequest extends FormRequest
             'permissions.*' => ['string'],
         ];
     }
-    
+
     public function messages(): array
     {
         return [

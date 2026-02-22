@@ -6,6 +6,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Admin;
 use App\Enums\PostStatus;
+use App\Events\PostCreated;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -20,17 +21,19 @@ class PostService
 
     public function getAllPublished($perPage = 6)
     {
-        return Post::where('status',PostStatus::Published)->latest()->paginate($perPage);
+        return Post::where('status', PostStatus::Published)->latest()->paginate($perPage);
     }
 
     public function store(array $data, Authenticatable $actor)
     {
-        return Post::create([
+        $post = Post::create([
             'title'     => $data['title'],
             'content'   => $data['content'],
             'status'  => PostStatus::Draft,
             'user_id'   => $actor instanceof User ? $actor->id : null,
         ]);
+        PostCreated::dispatch($post);
+        return $post;
     }
 
     public function update(array $data, Post $post, Authenticatable $actor)

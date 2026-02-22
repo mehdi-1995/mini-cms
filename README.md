@@ -22,7 +22,6 @@ flowchart TD
     B --> G[Form Requests / Validation]
     B --> H[Views / Blade Templates]
 
---------------------------------------------------------------------------
 🎯 Design Principles
 
     Thin Controllers, service-driven business logic
@@ -37,7 +36,6 @@ flowchart TD
 
     Feature-test coverage, no mocking business logic
 
---------------------------------------------------------------------------
 🔐 Roles & Permissions
 
     Multi-guard roles (admin, web)
@@ -57,7 +55,6 @@ flowchart TD
 | Delete Post      |     Any     |     Any     | Own (published cannot be deleted) |   ❌  |
 | Workflow publish | Any (Admin) | Only review |                 ❌                 |   ❌  |
 
---------------------------------------------------------------------------
 📝 Post Workflow
 
     States: draft → review → published
@@ -68,7 +65,6 @@ flowchart TD
 
     Tests: feature tests covering all transitions and edge cases
 
---------------------------------------------------------------------------
 🧪 Testing
 
     Feature tests only
@@ -79,7 +75,6 @@ flowchart TD
 
     Uses RefreshDatabase trait
 
---------------------------------------------------------------------------
 📦 Current Status
 
     Stage 1 complete: Core CMS + Role & Post workflow
@@ -92,7 +87,6 @@ flowchart TD
 
     Published column removed, workflow-driven posts
 
---------------------------------------------------------------------------
 🔜 Next Steps
 
     Event & Notification Layer (Stage 2)
@@ -105,7 +99,6 @@ flowchart TD
 
     Admin UX improvements (bulk actions, search, filter)
 
---------------------------------------------------------------------------
 🗺 Development Roadmap
 
 | Stage | Focus                       | Status     |
@@ -121,7 +114,6 @@ flowchart TD
 | 9     | API Layer                   | ⚪ Optional |
 | 10    | Multi-tenant CMS            | ⚪ Optional |
 
---------------------------------------------------------------------------
 ⚙️ Installation
 
     git clone <repo>
@@ -136,7 +128,6 @@ flowchart TD
 
     php artisan test
 
---------------------------------------------------------------------------
 🧠 Philosophy
 
 Build small, clean, and maintainable

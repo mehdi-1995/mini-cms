@@ -6,6 +6,7 @@ use DomainException;
 use App\Models\Post;
 use App\Models\Admin;
 use App\Enums\PostStatus;
+use App\Events\PostWorkflowTransitioned;
 use Illuminate\Contracts\Auth\Authenticatable;
 
 class PostWorkflowService
@@ -16,10 +17,14 @@ class PostWorkflowService
             throw new DomainException('Post is not draft.');
         }
 
+        $from = $post->status;
+
         $post->update([
             'status' => PostStatus::Review,
         ]);
 
+        PostWorkflowTransitioned::dispatch($post, $from, PostStatus::Review);
+        
         return $post;
     }
 
